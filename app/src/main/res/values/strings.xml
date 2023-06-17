@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">ToDoApp</string>
+    <string name="splash_fragment">Splash</string>
+    <string name="add_todo_item">Добавить дело</string>
+    <string name="main">Main</string>
+    <string name="todoItemsTitle">Мои дела</string>
+    <string name="todoItemsSubtitle">Выполнено — 5</string>
+    <string name="addTodoItemSave">Сохранить</string>
+    <string name="addTodoItemEditTextHint">Что надо сделать…</string>
+    <string name="addTodoItemPriorityTitle">Важность</string>
+    <string name="low_priority_popup_menu">Нет</string>
+    <string name="medium_priority_popup_menu">Низкий</string>
+    <string name="high_priority_popup_menu"><font fgcolor='#FF3B30'>!! Высокий</font></string>
+    <string name="addTodoItemDeadlineTitle">Сделать до</string>
+    <string name="addTodoItemDeleteText">Удалить</string>
+</resources>
