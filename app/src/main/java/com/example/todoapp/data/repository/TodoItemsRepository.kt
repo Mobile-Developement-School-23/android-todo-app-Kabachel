@@ -1,11 +1,22 @@
 package com.example.todoapp.data.repository
 
+import android.icu.util.UniversalTimeScale.toLong
+import android.media.CamcorderProfile.getAll
+import com.example.todoapp.data.database.TodoItemsDao
+import com.example.todoapp.data.database.mapper.TodoItemDbEntityToDomain
+import com.example.todoapp.data.database.mapper.TodoItemDbEntityToDomainImpl
+import com.example.todoapp.data.database.mapper.TodoItemDomainToDbEntity
+import com.example.todoapp.data.database.mapper.TodoItemDomainToDbEntityImpl
+import com.example.todoapp.data.network.NetworkApi
+import com.example.todoapp.data.network.NetworkApiImpl
+import com.example.todoapp.data.network.entity.TodoItemNetwork
+import com.example.todoapp.data.network.mapper.TodoItemNetworkToTodoItemDomain
+import com.example.todoapp.data.network.mapper.TodoItemNetworkToTodoItemDomainImpl
 import com.example.todoapp.domain.entity.PriorityType
 import com.example.todoapp.domain.entity.TodoItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
-import java.util.Date
 
 /**
  * Репозиторий для работы со списками дел
@@ -29,9 +40,9 @@ internal interface TodoItemsRepository {
     /**
      * Удалить дело
      *
-     * @param id дела которое нужно удалить
+     * @param item дело которое нужно удалить
      */
-    suspend fun deleteTodoItemWithId(id: String)
+    suspend fun deleteTodoItemWithId(item: TodoItem)
 
     /**
      * Получить размер списка дел
@@ -39,36 +50,35 @@ internal interface TodoItemsRepository {
     suspend fun getTodoItemSize() = list.size
 }
 
-internal class TodoItemsRepositoryImpl : TodoItemsRepository {
+internal class TodoItemsRepositoryImpl(
+    private val dao: TodoItemsDao,
+    private val api: NetworkApi = NetworkApiImpl(),
+    private val dbEntityToDomain: TodoItemDbEntityToDomain = TodoItemDbEntityToDomainImpl(),
+    private val domainToDbEntity: TodoItemDomainToDbEntity = TodoItemDomainToDbEntityImpl(),
+    private val networkToDomain: TodoItemNetworkToTodoItemDomain = TodoItemNetworkToTodoItemDomainImpl(),
+) : TodoItemsRepository {
 
     override suspend fun getTodoItems(): List<TodoItem> =
         withContext(Dispatchers.IO) {
-            list
+            val request = api.getTodoItems()
+
+            if (request.isFailure) {
+                val items = dao.getAll().map { dbEntityToDomain(it) }
+                println("---> elements = $items")
+                items
+            } else {
+                request.getOrThrow().list.map { networkToDomain(it) }
+            }
         }
 
     override suspend fun addTodoItem(todoItem: TodoItem) =
         withContext(Dispatchers.IO) {
-            println("---> Start")
-            for (i in list.indices) {
-                if (list[i].id == todoItem.id) {
-                    list[i] = todoItem
-                    println("--->FOUND")
-                    return@withContext
-                }
-            }
-            list += todoItem
-            println("--->ADDED")
+            dao.insertTodoItem(domainToDbEntity(todoItem))
         }
 
-    override suspend fun deleteTodoItemWithId(id: String) {
-        for (i in list.indices) {
-            if (list[i].id == id) {
-                list.remove(list[i])
-                for (j in i until list.size) {
-                    list[j].id = (list[j].id.toInt() - 1).toString()
-                }
-                return
-            }
+    override suspend fun deleteTodoItemWithId(item: TodoItem) {
+        withContext(Dispatchers.IO) {
+            println("--->deleted = ${dao.deleteTodoItem(item.id.toLong())}")
         }
     }
 }

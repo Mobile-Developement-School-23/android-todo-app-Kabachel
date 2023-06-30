@@ -1,9 +1,11 @@
 package com.example.todoapp.domain.interactor
 
+import com.example.todoapp.data.database.Dependencies
 import com.example.todoapp.data.repository.TodoItemsRepository
 import com.example.todoapp.domain.entity.TodoItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 /**
  * Интерактор для взаимодействия с делами
@@ -29,7 +31,7 @@ internal interface TodoItemsInteractor {
      *
      * @param id дела которое нужно удалить
      */
-    suspend fun deleteTodoItemWithId(id: String)
+    suspend fun deleteTodoItemWithId(item: TodoItem)
 
     /**
      * Получить размер списка дел
@@ -51,9 +53,9 @@ internal class TodoItemsInteractorImpl(
             todoItemsRepository.addTodoItem(todoItem)
         }
 
-    override suspend fun deleteTodoItemWithId(id: String) {
+    override suspend fun deleteTodoItemWithId(item: TodoItem) {
         withContext(Dispatchers.IO) {
-            todoItemsRepository.deleteTodoItemWithId(id)
+            todoItemsRepository.deleteTodoItemWithId(item)
         }
     }
 

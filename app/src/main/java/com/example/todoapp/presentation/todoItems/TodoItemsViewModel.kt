@@ -1,6 +1,9 @@
 package com.example.todoapp.presentation.todoItems
 
 import androidx.lifecycle.ViewModel
+import com.example.todoapp.MainActivity
+import com.example.todoapp.data.database.Dependencies
+import com.example.todoapp.data.database.TodoItemsDatabase
 import com.example.todoapp.data.repository.TodoItemsRepositoryImpl
 import com.example.todoapp.domain.entity.TodoItem
 import com.example.todoapp.domain.interactor.TodoItemsInteractor
@@ -15,15 +18,19 @@ import kotlinx.coroutines.runBlocking
  * @author Данила Шабанов on 13.06.2023
  */
 internal class TodoItemsViewModel(
-    private val interactor: TodoItemsInteractor = TodoItemsInteractorImpl(TodoItemsRepositoryImpl()),
+    private val interactor: TodoItemsInteractor = TodoItemsInteractorImpl(Dependencies.repository),
 ) : ViewModel() {
 
     private val initialState: State by lazy { setInitialState() }
     private val mutableStateFlow = MutableStateFlow(initialState)
     private val stateFlow: StateFlow<State> = mutableStateFlow.asStateFlow()
 
-    val state: State
-        get() = stateFlow.value
+    val state: StateFlow<State>
+        get() = stateFlow
+
+    init {
+        createContentState()
+    }
 
     private fun setInitialState(): State = State.EmptyContent
 
@@ -50,6 +57,10 @@ internal class TodoItemsViewModel(
         }
     }
 
+    val onEvent: (event: Event) -> Unit = {
+        handleEvent(it)
+    }
+
     private fun onCompleteTask(event: Event.CompleteTask) {
         runBlocking {
             launch {
@@ -70,7 +81,7 @@ internal class TodoItemsViewModel(
     private fun onDeleteTask(event: Event.DeleteTask) {
         runBlocking {
             launch {
-                interactor.deleteTodoItemWithId(event.id)
+                interactor.deleteTodoItemWithId(event.item)
             }
         }
     }

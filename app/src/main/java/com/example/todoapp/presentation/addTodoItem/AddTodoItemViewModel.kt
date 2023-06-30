@@ -1,6 +1,8 @@
 package com.example.todoapp.presentation.addTodoItem
 
 import androidx.lifecycle.ViewModel
+import com.example.todoapp.MainActivity
+import com.example.todoapp.data.database.Dependencies
 import com.example.todoapp.data.repository.TodoItemsRepositoryImpl
 import com.example.todoapp.domain.entity.TodoItem
 import com.example.todoapp.domain.interactor.TodoItemsInteractor
@@ -12,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 internal class AddTodoItemViewModel(
-    private val interactor: TodoItemsInteractor = TodoItemsInteractorImpl(TodoItemsRepositoryImpl()),
+    private val interactor: TodoItemsInteractor = TodoItemsInteractorImpl(Dependencies.repository),
 ) : ViewModel() {
 
     private val initialState: State by lazy { setInitialState() }
