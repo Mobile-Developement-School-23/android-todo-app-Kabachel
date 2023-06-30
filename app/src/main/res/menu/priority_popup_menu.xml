@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/popupMenuLowPriority"
+        android:title="@string/low_priority_popup_menu" />
+    <item
+        android:id="@+id/popupMenuMediumPriority"
+        android:title="@string/medium_priority_popup_menu" />
+    <item
+        android:id="@+id/popupMenuHighPriority"
+        android:title="@string/high_priority_popup_menu" />
+</menu>
