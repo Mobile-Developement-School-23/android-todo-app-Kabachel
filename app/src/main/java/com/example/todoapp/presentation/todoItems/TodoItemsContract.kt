@@ -12,18 +12,15 @@ internal sealed interface Event {
     ) : Event
 
     data class DeleteTask(
-        val id: String,
+        val item: TodoItem,
     ) : Event
 
     object Refresh : Event
 }
 
-internal sealed interface Effect {
-
-}
-
 internal sealed interface Navigation {
 
+    object AddTodoItem : Navigation
 }
 
 internal sealed interface State {
