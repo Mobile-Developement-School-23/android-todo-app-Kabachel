@@ -1,4 +1,4 @@
-package com.example.todoapp.presentation.addTodoItem
+package com.example.todoapp.presentation.addtodoitem
 
 import com.example.todoapp.domain.entity.TodoItem
 

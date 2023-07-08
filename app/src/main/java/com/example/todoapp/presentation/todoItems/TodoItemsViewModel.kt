@@ -1,25 +1,34 @@
-package com.example.todoapp.presentation.todoItems
+package com.example.todoapp.presentation.todoitems
 
 import androidx.lifecycle.ViewModel
-import com.example.todoapp.MainActivity
-import com.example.todoapp.data.database.Dependencies
-import com.example.todoapp.data.database.TodoItemsDatabase
-import com.example.todoapp.data.repository.TodoItemsRepositoryImpl
-import com.example.todoapp.domain.entity.TodoItem
+import androidx.lifecycle.ViewModelProvider
 import com.example.todoapp.domain.interactor.TodoItemsInteractor
-import com.example.todoapp.domain.interactor.TodoItemsInteractorImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
+import javax.inject.Provider
 
 /**
  * @author Данила Шабанов on 13.06.2023
  */
-internal class TodoItemsViewModel(
-    private val interactor: TodoItemsInteractor = TodoItemsInteractorImpl(Dependencies.repository),
+internal class TodoItemsViewModel @Inject constructor(
+    private val interactor: TodoItemsInteractor,
 ) : ViewModel() {
+
+    class TodoItemsViewModelFactory @Inject constructor(
+        myViewModelProvider: Provider<TodoItemsViewModel>
+    ) : ViewModelProvider.Factory {
+        private val providers = mapOf<Class<*>, Provider<out ViewModel>>(
+            TodoItemsViewModel::class.java to myViewModelProvider
+        )
+
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return providers[modelClass]!!.get() as T
+        }
+    }
 
     private val initialState: State by lazy { setInitialState() }
     private val mutableStateFlow = MutableStateFlow(initialState)
@@ -65,14 +74,7 @@ internal class TodoItemsViewModel(
         runBlocking {
             launch {
                 interactor.addTodoItem(
-                    TodoItem(
-                        id = event.todoItem.id,
-                        text = event.todoItem.text,
-                        priority = event.todoItem.priority,
-                        createdDate = event.todoItem.createdDate,
-                        deadlineDate = event.todoItem.deadlineDate,
-                        isDone = event.todoItem.isDone
-                    )
+                    event.todoItem.copy(isDone = !event.todoItem.isDone)
                 )
             }
         }

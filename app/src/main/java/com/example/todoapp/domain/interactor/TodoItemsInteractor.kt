@@ -1,6 +1,5 @@
 package com.example.todoapp.domain.interactor
 
-import com.example.todoapp.data.database.Dependencies
 import com.example.todoapp.data.repository.TodoItemsRepository
 import com.example.todoapp.domain.entity.TodoItem
 import kotlinx.coroutines.Dispatchers
@@ -29,17 +28,17 @@ internal interface TodoItemsInteractor {
     /**
      * Удалить дело
      *
-     * @param id дела которое нужно удалить
+     * @param item дело которое нужно удалить
      */
     suspend fun deleteTodoItemWithId(item: TodoItem)
 
     /**
      * Получить размер списка дел
      */
-    suspend fun getTodoItemSize()
+    suspend fun getTodoItemSize(): Int
 }
 
-internal class TodoItemsInteractorImpl(
+internal class TodoItemsInteractorImpl @Inject constructor(
     private val todoItemsRepository: TodoItemsRepository,
 ) : TodoItemsInteractor {
 
@@ -59,9 +58,8 @@ internal class TodoItemsInteractorImpl(
         }
     }
 
-    override suspend fun getTodoItemSize() {
+    override suspend fun getTodoItemSize(): Int =
         withContext(Dispatchers.IO) {
             todoItemsRepository.getTodoItemSize()
         }
-    }
 }

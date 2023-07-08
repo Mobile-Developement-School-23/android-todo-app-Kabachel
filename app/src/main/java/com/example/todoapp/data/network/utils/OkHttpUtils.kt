@@ -1,8 +1,8 @@
-package com.example.todoapp.data.network
+package com.example.todoapp.data.network.utils
 
 import com.example.todoapp.data.network.entity.BodyResponse
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+//import com.squareup.moshi.Moshi
+//import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.HttpUrl
@@ -34,10 +34,12 @@ internal fun OkHttpClient.get(url: HttpUrl, authPassword: String): Result<BodyRe
                     )
                 }
 
+                /*
                 val moshi = Moshi.Builder()
                     .add(KotlinJsonAdapterFactory()).build()
                 val jsonAdapterResponse = moshi.adapter(BodyResponse::class.java)
                 return@use Result.success(jsonAdapterResponse.fromJson(response.body!!.string()))
+                 */
             }
         }
     })

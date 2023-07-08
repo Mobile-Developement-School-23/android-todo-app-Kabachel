@@ -1,11 +1,11 @@
-package com.example.todoapp.presentation.todoItems.recyclerview
+package com.example.todoapp.presentation.todoitems.recyclerview
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.example.todoapp.R
 import com.example.todoapp.domain.entity.TodoItem
-import com.example.todoapp.presentation.todoItems.Event
+import com.example.todoapp.presentation.todoitems.Event
 
 /**
  * @author Данила Шабанов on 10.06.2023
