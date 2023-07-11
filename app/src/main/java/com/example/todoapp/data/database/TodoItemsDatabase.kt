@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.todoapp.data.database.converter.LocalDateTimeConverter
 import com.example.todoapp.data.database.entity.TodoItemDbEntity
-import com.example.todoapp.data.repository.TodoItemsRepository
-import com.example.todoapp.data.repository.TodoItemsRepositoryImpl
 
 /**
  * @author Данила Шабанов on 24.06.2023.
@@ -17,22 +17,31 @@ import com.example.todoapp.data.repository.TodoItemsRepositoryImpl
         TodoItemDbEntity::class
     ]
 )
+@TypeConverters(LocalDateTimeConverter::class)
 internal abstract class TodoItemsDatabase : RoomDatabase() {
 
     abstract fun getTodoItemsDao(): TodoItemsDao
-}
 
-internal object Dependencies {
-    private const val DB_NAME = "todo_items.db"
-    private lateinit var applicationContext: Context
+    companion object {
+        private const val DB_NAME = "todo_items.db"
 
-    fun init(context: Context) {
-        applicationContext = context
+        @Volatile
+        private var instance: TodoItemsDatabase? = null
+
+        @JvmStatic
+        fun getInstance(context: Context): TodoItemsDatabase {
+            return instance
+                ?: synchronized(this) {
+                    instance ?: Room.databaseBuilder(
+                        context.applicationContext,
+                        TodoItemsDatabase::class.java,
+                        DB_NAME
+                    )
+                        .build()
+                        .also {
+                            instance = it
+                        }
+                }
+        }
     }
-
-    private val appDatabase: TodoItemsDatabase by lazy {
-        Room.databaseBuilder(applicationContext, TodoItemsDatabase::class.java, DB_NAME).build()
-    }
-
-    val repository: TodoItemsRepository by lazy { TodoItemsRepositoryImpl(appDatabase.getTodoItemsDao()) }
 }

@@ -1,28 +1,33 @@
-package com.example.todoapp.presentation.addTodoItem
+package com.example.todoapp.presentation.addtodoitem
 
 import androidx.lifecycle.ViewModel
-import com.example.todoapp.MainActivity
-import com.example.todoapp.data.database.Dependencies
-import com.example.todoapp.data.repository.TodoItemsRepositoryImpl
+import androidx.lifecycle.ViewModelProvider
 import com.example.todoapp.domain.entity.TodoItem
 import com.example.todoapp.domain.interactor.TodoItemsInteractor
-import com.example.todoapp.domain.interactor.TodoItemsInteractorImpl
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
+import javax.inject.Provider
 
-internal class AddTodoItemViewModel(
-    private val interactor: TodoItemsInteractor = TodoItemsInteractorImpl(Dependencies.repository),
+internal class AddTodoItemViewModel @Inject constructor(
+    private val interactor: TodoItemsInteractor,
 ) : ViewModel() {
+
+    class AddTodoItemViewModelFactory @Inject constructor(
+        myViewModelProvider: Provider<AddTodoItemViewModel>
+    ) : ViewModelProvider.Factory {
+        private val providers = mapOf<Class<*>, Provider<out ViewModel>>(
+            AddTodoItemViewModel::class.java to myViewModelProvider
+        )
+
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return providers[modelClass]!!.get() as T
+        }
+    }
 
     private val initialState: State by lazy { setInitialState() }
     private val mutableStateFlow = MutableStateFlow(initialState)
-    private val stateFlow: StateFlow<State> = mutableStateFlow.asStateFlow()
-
-    val state: State
-        get() = stateFlow.value
 
     private fun setInitialState(): State = State.EmptyContent
 
@@ -51,7 +56,7 @@ internal class AddTodoItemViewModel(
                         deadlineDate = event.todoItemPreview.deadlineDate,
                         isDone = event.todoItemPreview.isDone,
                         createdDate = event.todoItemPreview.createdDate,
-                        modifiedDate = null,
+                        modifiedDate = event.todoItemPreview.modifiedDate,
                     )
                 )
             }

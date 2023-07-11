@@ -10,8 +10,8 @@ internal data class TodoItem(
     var id: String,
     var text: String,
     var priority: PriorityType,
-    var deadlineDate: Date? = null,
+    var deadlineDate: LocalDateTime? = null,
     var isDone: Boolean = false,
     val createdDate: LocalDateTime,
-    var modifiedDate: Date? = null,
+    var modifiedDate: LocalDateTime,
 )

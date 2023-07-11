@@ -1,4 +1,4 @@
-package com.example.todoapp.presentation.todoItems.recyclerview
+package com.example.todoapp.presentation.todoitems.recyclerview
 
 import android.content.Context
 import android.graphics.Canvas
@@ -34,9 +34,9 @@ internal class SwipeItemCallback(
         )
     }
     private val acceptIcon =
-        AppCompatResources.getDrawable(context, R.drawable.ic_check)!!.toBitmap()
+        AppCompatResources.getDrawable(context, R.drawable.ic_check)?.toBitmap()
     private val deleteIcon =
-        AppCompatResources.getDrawable(context, R.drawable.ic_delete)!!.toBitmap()
+        AppCompatResources.getDrawable(context, R.drawable.ic_delete)?.toBitmap()
 
     override fun onMove(
         recyclerView: RecyclerView,
@@ -67,23 +67,29 @@ internal class SwipeItemCallback(
                     itemView.left.toFloat(), itemView.top.toFloat(), dX,
                     itemView.bottom.toFloat(), rightSwipePaint
                 )
-                c.drawBitmap(
-                    acceptIcon,
-                    itemView.left.toFloat() - context.dpToPx(40) + dX,
-                    itemView.top.toFloat() + (itemView.bottom.toFloat() - itemView.top.toFloat() - acceptIcon.height) / 2,
-                    whitePaint
-                )
+                if (acceptIcon != null) {
+                    c.drawBitmap(
+                        acceptIcon,
+                        itemView.left.toFloat() - context.dpToPx(40) + dX,
+                        itemView.top.toFloat() + (itemView.bottom.toFloat() -
+                                itemView.top.toFloat() - acceptIcon.height) / 2,
+                        whitePaint
+                    )
+                }
             } else {
                 c.drawRect(
                     itemView.right.toFloat() + dX, itemView.top.toFloat(),
                     itemView.right.toFloat(), itemView.bottom.toFloat(), leftSwipePaint
                 )
-                c.drawBitmap(
-                    deleteIcon,
-                    itemView.right.toFloat() + context.dpToPx(40) - deleteIcon.width + dX,
-                    itemView.top.toFloat() + (itemView.bottom.toFloat() - itemView.top.toFloat() - deleteIcon.height) / 2,
-                    whitePaint
-                )
+                if (deleteIcon != null) {
+                    c.drawBitmap(
+                        deleteIcon,
+                        itemView.right.toFloat() + context.dpToPx(40) - deleteIcon.width + dX,
+                        itemView.top.toFloat() + (itemView.bottom.toFloat() -
+                                itemView.top.toFloat() - deleteIcon.height) / 2,
+                        whitePaint
+                    )
+                }
 
             }
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)

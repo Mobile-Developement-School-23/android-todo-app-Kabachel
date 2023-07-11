@@ -1,4 +1,4 @@
-package com.example.todoapp.presentation.todoItems
+package com.example.todoapp.presentation.todoitems
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,8 +15,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentTodoItemsBinding
 import com.example.todoapp.domain.entity.TodoItem
-import com.example.todoapp.presentation.todoItems.recyclerview.SwipeItemCallback
-import com.example.todoapp.presentation.todoItems.recyclerview.TodoItemAdapter
+import com.example.todoapp.getAppComponent
+import com.example.todoapp.presentation.todoitems.recyclerview.SwipeItemCallback
+import com.example.todoapp.presentation.todoitems.recyclerview.TodoItemAdapter
 import com.example.todoapp.utils.showToast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -26,7 +27,9 @@ import kotlinx.coroutines.launch
  */
 internal class TodoItemsFragment : Fragment(R.layout.fragment_todo_items) {
 
-    private val viewModel by viewModels<TodoItemsViewModel>()
+    private val viewModel: TodoItemsViewModel by viewModels {
+        getAppComponent().todoItemsViewModelsFactory()
+    }
 
     private var _binding: FragmentTodoItemsBinding? = null
     private val binding get() = _binding!!
@@ -121,12 +124,12 @@ internal class TodoItemsFragment : Fragment(R.layout.fragment_todo_items) {
             }
         }
 
-        setupPullToRefresh(itemsAdapter)
+        setupPullToRefresh()
         setupCheckboxClick(itemsAdapter)
         setupSwipeToRemove(itemsAdapter, recyclerView)
     }
 
-    private fun setupPullToRefresh(itemsAdapter: TodoItemAdapter) {
+    private fun setupPullToRefresh() {
         val counterDoneTodoItems = binding.todoItemsSubtitle
 
         with(binding.swipeToRefresh) {

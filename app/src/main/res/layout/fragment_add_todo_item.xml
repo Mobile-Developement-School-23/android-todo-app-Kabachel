@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="?back_primary"
     android:paddingHorizontal="16dp"
-    tools:context="presentation.addTodoItem.AddTodoItemFragment">
+    tools:context="presentation.addtodoitem.AddTodoItemFragment">
 
     <ImageView
         android:id="@+id/addTodoItemCloseButton"

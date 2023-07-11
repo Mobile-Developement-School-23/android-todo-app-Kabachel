@@ -1,4 +1,4 @@
-package com.example.todoapp.presentation.addTodoItem
+package com.example.todoapp.presentation.addtodoitem
 
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -15,6 +14,7 @@ import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentAddTodoItemBinding
 import com.example.todoapp.domain.entity.PriorityType
 import com.example.todoapp.domain.entity.TodoItem
+import com.example.todoapp.getAppComponent
 import java.time.LocalDateTime
 import java.util.Calendar
 
@@ -23,7 +23,9 @@ import java.util.Calendar
  */
 class AddTodoItemFragment : Fragment(R.layout.fragment_add_todo_item) {
 
-    private val viewModel by viewModels<AddTodoItemViewModel>()
+    private val viewModel: AddTodoItemViewModel by viewModels {
+        getAppComponent().addTodoItemViewModelFactory()
+    }
 
     private var _binding: FragmentAddTodoItemBinding? = null
     private val binding get() = _binding!!
@@ -52,6 +54,7 @@ class AddTodoItemFragment : Fragment(R.layout.fragment_add_todo_item) {
                 deadlineDate = null,
                 isDone = false,
                 createdDate = LocalDateTime.now(),
+                modifiedDate = LocalDateTime.now(),
             )
             viewModel.handleEvent(Event.AddTodoItemPreview(todoItem))
             findNavController().popBackStack()
