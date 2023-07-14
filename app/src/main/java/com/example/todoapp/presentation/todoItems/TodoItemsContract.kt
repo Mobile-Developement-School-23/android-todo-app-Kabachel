@@ -16,6 +16,8 @@ internal sealed interface Event {
     ) : Event
 
     object Refresh : Event
+
+    object AddTodoItem : Event
 }
 
 internal sealed interface Navigation {
@@ -30,6 +32,4 @@ internal sealed interface State {
     data class Content(
         val screenItems: List<TodoItem>,
     ) : State
-
-    object Error : State
 }

@@ -4,6 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +21,8 @@ import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentTodoItemsBinding
 import com.example.todoapp.domain.entity.TodoItem
 import com.example.todoapp.getAppComponent
+import com.example.todoapp.presentation.TodoAppUi
+import com.example.todoapp.presentation.resources.TodoAppTheme
 import com.example.todoapp.presentation.todoitems.recyclerview.SwipeItemCallback
 import com.example.todoapp.presentation.todoitems.recyclerview.TodoItemAdapter
 import com.example.todoapp.utils.showToast
@@ -36,13 +43,28 @@ internal class TodoItemsFragment : Fragment(R.layout.fragment_todo_items) {
 
     private var flag = false
 
+    @Composable
+    fun TodoAppScreen() {
+        TodoAppUi(
+            state = viewModel.state.collectAsState(State.Content(emptyList())).value,
+            onEvent = { viewModel.handleEvent(it) }
+        )
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTodoItemsBinding.inflate(layoutInflater)
-        return binding.root
+//        return binding.root
+        return ComposeView(requireContext()).apply {
+            setContent {
+                TodoAppTheme {
+                    TodoAppScreen()
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -115,11 +137,6 @@ internal class TodoItemsFragment : Fragment(R.layout.fragment_todo_items) {
                         counterDoneTodoItems.text =
                             it.screenItems.size.toString()
                     }
-
-                    is State.Error -> {
-                        requireContext().showToast("Ошибка со стейтом")
-                        counterDoneTodoItems.text = "0"
-                    }
                 }
             }
         }
@@ -130,8 +147,6 @@ internal class TodoItemsFragment : Fragment(R.layout.fragment_todo_items) {
     }
 
     private fun setupPullToRefresh() {
-        val counterDoneTodoItems = binding.todoItemsSubtitle
-
         with(binding.swipeToRefresh) {
             setOnRefreshListener {
                 viewModel.handleEvent(Event.Refresh)

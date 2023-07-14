@@ -63,6 +63,10 @@ internal class TodoItemsViewModel @Inject constructor(
             is Event.Refresh -> {
                 createContentState()
             }
+
+            is Event.AddTodoItem -> {
+
+            }
         }
     }
 
